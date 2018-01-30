@@ -1,2 +1,5 @@
 
-*.wav
+img/*.*
+wav/*.*
+
+Gemfile.lock
