@@ -43,8 +43,19 @@ end
 # Game module
 module Game
   def self.load
-    menu = MenuWindow.new
-    menu.show
+    @menu = MenuWindow.new
+    @menu.show
+  end
+
+  def self.start
+    @game = GameWindow.new
+    Game.properties[:width] = @game.width
+    Game.properties[:height] = @game.height
+    @game.show
+  end
+
+  def self.properties
+    @properties ||= {}
   end
 end
 
@@ -76,6 +87,8 @@ class Human
   attr_reader :x, :y, :death
 
   def initialize
+    @x = @y = @vel_x = @vel_y = @angle = 0.0
+    @speed = 5.0
     load_textures
     set_music
     set_position
@@ -95,6 +108,27 @@ class Human
     )
   end
 
+  def accelerate
+    @angle = rand(360)
+    @vel_x += Gosu.offset_x(@angle, 0.5)
+    @vel_y += Gosu.offset_y(@angle, 0.5)
+  end
+
+  def move
+    @x += @vel_x * @speed
+    @y += @vel_y * @speed
+    @x %= Game.properties[:width]
+    @y %= Game.properties[:height]
+
+    @vel_x *= 0.95
+    @vel_y *= 0.95
+  end
+
+  def run_away
+    accelerate
+    move
+  end
+
   private
 
   def load_textures
@@ -106,8 +140,8 @@ class Human
   end
 
   def set_position
-    @x = rand * 640
-    @y = rand * 480
+    @x = rand * Game.properties[:width]
+    @y = rand * Game.properties[:height]
   end
 
   def set_color
@@ -162,11 +196,17 @@ class Player
   def move
     @x += @vel_x * @speed
     @y += @vel_y * @speed
-    @x %= 640
-    @y %= 480
+    @x %= Game.properties[:width]
+    @y %= Game.properties[:height]
 
     @vel_x *= 0.95
     @vel_y *= 0.95
+  end
+
+  def scare_humans(humans)
+    humans.each do |human|
+      human.run_away if Gosu.distance(@x, @y, human.x, human.y) < 200
+    end
   end
 
   def collect_humans(humans, dead_humans)
@@ -227,8 +267,7 @@ class MenuWindow < Gosu::Window
   end
 
   def start_game
-    game = GameWindow.new
-    game.show
+    Game.start
     close
   end
 end
@@ -264,6 +303,11 @@ class GameWindow < Gosu::Window
   end
 
   private
+
+  def player_interaction
+    @player.scare_humans(@humans)
+    @player.collect_humans(@humans, @dead_humans)
+  end
 
   def load_textures
     @background = Textures.get(:background)
@@ -308,7 +352,7 @@ class GameWindow < Gosu::Window
       @player.speed_down
     end
     @player.move
-    @player.collect_humans(@humans, @dead_humans)
+    player_interaction
   end
 
   def update_humans
@@ -318,8 +362,7 @@ class GameWindow < Gosu::Window
   def return_menu
     @player.die
     @music.stop
-    menu = MenuWindow.new
-    menu.show
+    Game.load
     close
   end
 end
