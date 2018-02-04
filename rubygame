@@ -9,18 +9,24 @@ end
 
 # Module for textures
 module Textures
-  def self.load
+  def self.load(fullscreen = false)
+    dir = fullscreen ? 'img-hd' : 'img'
     @textures ||= {
-      background: Gosu::Image.new('img/background.jpg', tileable: true),
-      background_menu: Gosu::Image.new('img/startscreen.jpg', tileable: true),
+      background: Gosu::Image.new("#{dir}/background.jpg", tileable: true),
+      background_menu: Gosu::Image.new("#{dir}/menu.jpg", tileable: true),
       player: Gosu::Image.new('img/car.bmp'),
       human: Gosu::Image.load_tiles('img/males.png', 25, 25),
       human_dead: Gosu::Image.new('img/dead.bmp')
     }
   end
 
+  def self.reload(fullscreen)
+    @textures = nil
+    load(fullscreen)
+  end
+
   def self.get(texture)
-    Textures.load[texture]
+    Textures.load[texture.to_sym]
   end
 end
 
@@ -42,20 +48,35 @@ end
 
 # Game module
 module Game
-  def self.load
-    @menu = MenuWindow.new
+  def self.load(options = {})
+    @menu = MenuWindow.new(options)
     @menu.show
   end
 
-  def self.start
-    @game = GameWindow.new
+  def self.start(options = {})
+    @game = GameWindow.new(options)
     Game.properties[:width] = @game.width
     Game.properties[:height] = @game.height
+    Game.properties[:paused] = false
+    Game.properties[:fullscreen] = options[:fullscreen] || false
     @game.show
+  end
+
+  def self.reload(options = {})
+    Textures.reload(options[:fullscreen])
+    load(options)
   end
 
   def self.properties
     @properties ||= {}
+  end
+
+  def self.toggle_pause
+    Game.properties[:paused] = Game.properties[:paused] ? false : true
+  end
+
+  def self.paused?
+    Game.properties[:paused]
   end
 end
 
@@ -245,9 +266,10 @@ end
 
 # Represents a menu window
 class MenuWindow < Gosu::Window
-  def initialize(width = 640, height = 480)
-    super width, height
-    self.caption = 'Press Enter'
+  def initialize(options = {})
+    super options[:width] || 640, options[:height] || 480
+    self.fullscreen = options[:fullscreen] || false
+    self.caption = options[:caption] || 'Press Enter'
     load_textures
   end
 
@@ -257,6 +279,7 @@ class MenuWindow < Gosu::Window
 
   def button_down(id)
     start_game if id == Gosu::KbReturn
+    toggle_fullscreen if id == Gosu::KbH
     close if id == Gosu::KbEscape
   end
 
@@ -267,16 +290,31 @@ class MenuWindow < Gosu::Window
   end
 
   def start_game
-    Game.start
+    Game.start(
+      width: width,
+      height: height,
+      fullscreen: fullscreen?
+    )
+    close
+  end
+
+  def toggle_fullscreen
+    self.fullscreen = fullscreen? ? false : true
+    Game.reload(
+      width: fullscreen? ? Gosu.screen_width : nil,
+      height: fullscreen? ? Gosu.screen_height : nil,
+      fullscreen: fullscreen?
+    )
     close
   end
 end
 
 # Represents a game window
 class GameWindow < Gosu::Window
-  def initialize(width = 640, height = 480)
-    super width, height
-    self.caption = 'Enjoy'
+  def initialize(options = {})
+    super options[:width] || 640, options[:height] || 480
+    self.fullscreen = options[:fullscreen] || false
+    self.caption = options[:caption] || 'Enjoy'
     @humans = []
     @dead_humans = []
     load_textures
@@ -285,6 +323,8 @@ class GameWindow < Gosu::Window
   end
 
   def update
+    Game.toggle_pause if Gosu.button_down?(Gosu::KbP)
+    return if Game.paused?
     update_player
     update_humans
     update_music
@@ -362,7 +402,11 @@ class GameWindow < Gosu::Window
   def return_menu
     @player.die
     @music.stop
-    Game.load
+    Game.load(
+      width: width,
+      height: height,
+      fullscreen: fullscreen?
+    )
     close
   end
 end
