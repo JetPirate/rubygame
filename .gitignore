@@ -2,5 +2,7 @@
 img/*.*
 wav/*.*
 img-hd/*.*
+fonts/*
+TODO
 
 Gemfile.lock
