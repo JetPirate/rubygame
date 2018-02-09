@@ -2,6 +2,7 @@
 module Sounds
   def self.load
     @sounds ||= {
+      menu_music: Gosu::Song.new('wav/ost0_game.wav'),
       main_music: Gosu::Song.new('wav/ost1_game.wav'),
       car_idle: Gosu::Sample.new('wav/caridle.wav'),
       car_drive: Gosu::Sample.new('wav/cardrive.wav'),

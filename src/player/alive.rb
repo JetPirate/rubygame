@@ -18,17 +18,14 @@ module Player
     end
 
     def turn_left
-      # @car_drive.play(0.5, 1)
       @angle -= 4.5
     end
 
     def turn_right
-      # @car_drive.play(0.5, 1)
       @angle += 4.5
     end
 
     def accelerate
-      # @car_drive.play(0.5, 1)
       @vel_x += Gosu.offset_x(@angle, 0.5)
       @vel_y += Gosu.offset_y(@angle, 0.5)
     end
@@ -75,6 +72,7 @@ module Player
     end
 
     def draw
+      @image = Textures.get(:player_1_stage) if @score == 69
       @image.draw_rot(@x, @y, ZOrder::PLAYER, @angle)
     end
 
@@ -86,7 +84,6 @@ module Player
 
     def set_music
       @car_idle = Sounds.get(:car_idle)
-      @car_drive = Sounds.get(:car_drive)
       @car_idle_channel = @car_idle.play(0.5, 1, true)
     end
   end

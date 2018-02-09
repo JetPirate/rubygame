@@ -1,5 +1,4 @@
 require_relative 'graphics'
-require_relative 'graphics/windows'
 require_relative 'sounds'
 require_relative 'player'
 require_relative 'human'
@@ -19,6 +18,8 @@ module Game
     Game.properties[:fullscreen] = options[:fullscreen] || false
     @game.show
   end
+
+  def self.end; end
 
   def self.reload(options = {})
     Textures.reload(options[:fullscreen])
