@@ -4,6 +4,12 @@ JetPirate's RubyGame
 Another "game" in this world
 ---------------------
 
+![Main menu](https://i.imgur.com/Bq02YmC.png)
+---------------------
+![Game](https://i.imgur.com/d4yBwZc.png)
+---------------------
+
+---------------------
 You can DWTFYWT with this code (see
 [LICENSE](https://github.com/JetPirate/rubygame/blob/master/LICENSE)
 ). Also you can write
@@ -24,7 +30,9 @@ $ ./rubygame
  - **Enter** to play
  - **WASD** to move
  - **Shift** to speed up
+ - **P** to (un)pauze
  - **9** or **0** to control music volume
+ - **C** to show controls
  - **ESC** to exit
 
 ### Installation
