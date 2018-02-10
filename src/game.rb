@@ -1,3 +1,4 @@
+require_relative 'settings_file'
 require_relative 'graphics'
 require_relative 'sounds'
 require_relative 'player'
@@ -5,25 +6,37 @@ require_relative 'human'
 
 # Game module
 module Game
-  def self.load(options = {})
-    @menu = Windows::Menu.new(options)
+  def self.load
+    @menu = Windows::Menu.new
     @menu.show
   end
 
-  def self.start(options = {})
-    @game = Windows::Main.new(options)
+  def self.start
+    @game = Windows::Main.new
     Game.properties[:width] = @game.width
     Game.properties[:height] = @game.height
     Game.properties[:paused] = false
-    Game.properties[:fullscreen] = options[:fullscreen] || false
+    Game.properties[:fullscreen] = @game.fullscreen?
     @game.show
+  end
+
+  def self.settings
+    @settings = Windows::Settings.new
+    @settings.show
   end
 
   def self.end; end
 
-  def self.reload(options = {})
-    Textures.reload(options[:fullscreen])
-    load(options)
+  def self.reload
+    Game.properties = {}
+    SettingsFile.reload
+    Textures.reload
+    Sounds.reload
+    Game.load
+  end
+
+  def self.properties=(properties)
+    @properties = properties
   end
 
   def self.properties

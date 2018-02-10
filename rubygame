@@ -3,6 +3,7 @@
 require 'gosu'
 require_relative 'src/game'
 
+SettingsFile.load
 Textures.load
 Sounds.load
 Game.load
