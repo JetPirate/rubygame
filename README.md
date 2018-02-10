@@ -81,4 +81,8 @@ You just need to name it just like it is named in the pack.
 
 ### Contributing
 
-I'll leave this section here just because everyone does it.
+ - Fork it
+ - Create your feature branch
+ - Commit your changes
+ - Push to the branch
+ - Create new Pull Request
