@@ -2,10 +2,10 @@
 module Windows
   # Represents a menu window
   class Menu < Gosu::Window
-    def initialize(options = {})
-      super options[:width] || 640, options[:height] || 480
-      self.fullscreen = options[:fullscreen] || false
-      self.caption = options[:caption] || 'Press Enter'
+    def initialize
+      super SettingsFile.get(:width), SettingsFile.get(:height)
+      self.fullscreen = SettingsFile.get(:fullscreen)
+      self.caption = 'Press Enter'
       load_textures
       create_menu_buttons(menu_buttons_opts)
       create_menu_buttons_commands
@@ -24,7 +24,6 @@ module Windows
 
     def button_down(id)
       start_game if id == Gosu::KbReturn
-      toggle_fullscreen if id == Gosu::KbH
       toggle_controls if id == Gosu::KbC
       close if id == Gosu::KbEscape
     end
@@ -34,11 +33,7 @@ module Windows
     end
 
     def start_game
-      Game.start(
-        width: width,
-        height: height,
-        fullscreen: fullscreen?
-      )
+      Game.start
       close
     end
 
@@ -48,7 +43,8 @@ module Windows
     end
 
     def settings
-      # TODO
+      Game.settings
+      close
     end
 
     def toggle_controls
@@ -65,8 +61,12 @@ module Windows
 
     def set_music
       @music = Sounds.get(:menu_music)
-      @music.volume = 0.5
-      @music.play(true)
+      @music.volume = SettingsFile.get(:music_volume)
+      if SettingsFile.get(:music)
+        @music.play(true)
+      else
+        @music.stop
+      end
     end
 
     def create_menu_buttons(options)
@@ -74,8 +74,7 @@ module Windows
       y_offset = height * 0.25
       options[:text][:value].each do |name|
         options[:text][:value] = name
-        @menu_buttons << UIElements::Button.new(self,
-                                                width * 0.05,
+        @menu_buttons << UIElements::Button.new(self, width * 0.05,
                                                 y_offset,
                                                 options)
         y_offset += height * 0.1
@@ -101,16 +100,6 @@ module Windows
         button.mouse_pressed(&:command)
         button.mouse_released { ; }
       end
-    end
-
-    def toggle_fullscreen
-      self.fullscreen = fullscreen? ? false : true
-      Game.reload(
-        width: fullscreen? ? Gosu.screen_width : nil,
-        height: fullscreen? ? Gosu.screen_height : nil,
-        fullscreen: fullscreen?
-      )
-      close
     end
 
     def menu_buttons_opts

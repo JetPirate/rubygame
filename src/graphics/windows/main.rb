@@ -2,14 +2,14 @@
 module Windows
   # Represents a main game window
   class Main < Gosu::Window
-    def initialize(options = {})
-      super options[:width] || 640, options[:height] || 480
-      self.fullscreen = options[:fullscreen] || false
-      self.caption = options[:caption] || 'Enjoy'
+    def initialize
+      super SettingsFile.get(:width), SettingsFile.get(:height)
+      self.fullscreen = SettingsFile.get(:fullscreen)
+      self.caption = 'Enjoy'
       @humans = []
       @dead_humans = []
       load_textures
-      load_player
+      load_player(SettingsFile.get(:width) / 2, SettingsFile.get(:height) / 2)
       set_music
     end
 
@@ -52,8 +52,12 @@ module Windows
 
     def set_music
       @music = Sounds.get(:main_music)
-      @music.volume = 0.5
-      @music.play(true)
+      @music.volume = SettingsFile.get(:music_volume)
+      if SettingsFile.get(:music)
+        @music.play(true)
+      else
+        @music.stop
+      end
     end
 
     def draw_score
@@ -92,12 +96,7 @@ module Windows
 
     def return_menu
       @player.die
-      @music.stop
-      Game.load(
-        width: width,
-        height: height,
-        fullscreen: fullscreen?
-      )
+      Game.load
       close
     end
   end

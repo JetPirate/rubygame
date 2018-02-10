@@ -10,6 +10,8 @@ module Sounds
     }
   end
 
+  def self.reload; end
+
   def self.get(sound)
     Sounds.load[sound]
   end
