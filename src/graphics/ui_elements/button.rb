@@ -5,7 +5,7 @@ module UIElements
   # Represents a button
   class Button
     include MouseEvents
-    attr_reader :x, :y, :z, :width, :height, :image, :value, :color, :a
+    attr_reader :x, :y, :z, :width, :height, :image, :value, :color, :a, :window
 
     def initialize(window, x, y, options = {})
       @window = window
@@ -61,6 +61,7 @@ module UIElements
       add_image(options[:image] || Textures.get(:default_button))
       add_text(options[:text])
       add_drawing(options)
+      @command_name = options[:command][:name]
     end
 
     def add_drawing(options)

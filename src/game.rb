@@ -47,6 +47,14 @@ module Game
     Game.properties[:paused] = Game.properties[:paused] ? false : true
   end
 
+  def self.pause
+    Game.properties[:paused] = true
+  end
+
+  def self.unpause
+    Game.properties[:paused] = false
+  end
+
   def self.paused?
     Game.properties[:paused]
   end

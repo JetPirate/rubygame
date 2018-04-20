@@ -1,63 +1,173 @@
+require_relative '../resources'
+require_relative 'states'
 # Represents game windows
 module Windows
   # Represents a main game window
   class Main < Gosu::Window
+    include Resources
+    include States
     def initialize
       super SettingsFile.get(:width), SettingsFile.get(:height)
-      self.fullscreen = SettingsFile.get(:fullscreen)
-      self.caption = 'Enjoy'
-      @humans = []
-      @dead_humans = []
-      load_textures
+      load_menu
+      load_controls
+      load_defaults
       load_player(SettingsFile.get(:width) / 2, SettingsFile.get(:height) / 2)
       set_music
+      @state = GAME
     end
 
     def update
-      Game.toggle_pause if Gosu.button_down?(Gosu::KbP)
-      return if Game.paused?
-      update_player
-      update_humans
-      update_music
+      case @state
+      when GAME
+        update_game
+      when MENU
+        update_menu
+      when CONTROLS
+        update_controls
+      end
     end
 
     def draw
-      @background.draw(0, 0, ZOrder::BACKGROUND)
-      @player.draw
-      @humans.each(&:draw)
-      @dead_humans.each(&:draw)
-      draw_score
+      case @state
+      when GAME
+        draw_game
+      when MENU
+        draw_menu
+      when CONTROLS
+        draw_controls
+      end
+    end
+
+    def needs_cursor?
+      true unless @state == GAME
     end
 
     def button_down(id)
-      return_menu if id == Gosu::KbEscape
+      toggle_menu if id == Gosu::KbEscape
+    end
+
+    def return_menu
+      SettingsFile.save
+      self.caption = CAPTION_PAUSE
+      @state = MENU
+    end
+
+    def show_controls
+      self.caption = CAPTION_CONTROLS
+      @state = CONTROLS
+    end
+
+    def return_main_menu
+      @player.die
+      Game.load
+      close
+    end
+
+    def exit_game
+      Game.end
+      close
     end
 
     private
+
+    # menu
+
+    def load_menu_textures
+      @menu_background = Textures.get(:background_menu)
+    end
+
+    def load_menu
+      load_menu_textures
+      @menu_buttons = create_buttons(menu_buttons_opts)
+      create_buttons_commands(@menu_buttons)
+    end
+
+    def draw_menu
+      @menu_background.draw(0, 0, ZOrder::BACKGROUND)
+      draw_menu_buttons
+    end
+
+    def draw_menu_buttons
+      @menu_buttons.map(&:draw)
+    end
+
+    def update_menu
+      update_buttons(@menu_buttons)
+    end
+
+    def toggle_menu
+      if @state == MENU
+        Game.unpause
+        @state = GAME
+      elsif @state == GAME
+        Game.pause
+        @state = MENU
+      end
+    end
+
+    def menu_buttons_opts
+      {
+        names: %w[CONTROLS END QUIT],
+        commands: %i[show_controls return_main_menu exit_game]
+      }
+    end
+
+    # controls
+
+    def load_controls_textures
+      @controls_background = Textures.get(:controls)
+    end
+
+    def load_controls
+      load_controls_textures
+      @controls_buttons = create_buttons(controls_buttons_opts)
+      create_buttons_commands(@controls_buttons)
+    end
+
+    def draw_controls_buttons
+      @controls_buttons.map(&:draw)
+    end
+
+    def draw_controls
+      @controls_background.draw(0, 0, ZOrder::BACKGROUND)
+      draw_controls_buttons
+    end
+
+    def update_controls
+      update_buttons(@controls_buttons)
+    end
+
+    def controls_buttons_opts
+      {
+        names: ['BACK'],
+        commands: %i[return_menu]
+      }
+    end
+
+    # game
+
+    def load_game_textures
+      @background = Textures.get(:background)
+      @score_font = Gosu::Font.new(20)
+      @controls_page = Textures.get(:controls)
+    end
 
     def player_interaction
       @player.scare_humans(@humans)
       @player.collect_humans(@humans, @dead_humans)
     end
 
-    def load_textures
-      @background = Textures.get(:background)
-      @score_font = Gosu::Font.new(20)
+    def load_defaults
+      self.fullscreen = SettingsFile.get(:fullscreen)
+      self.caption = CAPTION_GAME
+      load_game_textures
+      @humans = []
+      @dead_humans = []
     end
 
     def load_player(x = 320, y = 240)
       @player = Player::Alive.new
       @player.warp(x, y)
-    end
-
-    def set_music
-      @music = Sounds.get(:main_music)
-      @music.volume = SettingsFile.get(:music_volume)
-      if SettingsFile.get(:music)
-        @music.play(true)
-      else
-        @music.stop
-      end
     end
 
     def draw_score
@@ -72,9 +182,12 @@ module Windows
       )
     end
 
-    def update_music(volume = 0.05)
-      @music.volume += volume if Gosu.button_down?(Gosu::Kb0)
-      @music.volume -= volume if Gosu.button_down?(Gosu::Kb9)
+    def draw_game
+      @background.draw(0, 0, ZOrder::BACKGROUND)
+      @player.draw
+      @humans.each(&:draw)
+      @dead_humans.each(&:draw)
+      draw_score
     end
 
     def update_player
@@ -94,10 +207,72 @@ module Windows
       @humans.push(Human::Alive.new) if rand(100) < 4 && @humans.size < 25
     end
 
-    def return_menu
-      @player.die
-      Game.load
-      close
+    def update_game
+      Game.toggle_pause if Gosu.button_down?(Gosu::KbP)
+      return if Game.paused?
+      update_player
+      update_humans
+      update_music
+    end
+
+    # music
+
+    def set_music
+      @music = Sounds.get(:main_music)
+      @music.volume = SettingsFile.get(:music_volume)
+      if SettingsFile.get(:music)
+        @music.play(true)
+      else
+        @music.stop
+      end
+    end
+
+    def update_music(volume = 0.05)
+      @music.volume += volume if Gosu.button_down?(Gosu::Kb0)
+      @music.volume -= volume if Gosu.button_down?(Gosu::Kb9)
+    end
+
+    def buttons_opts
+      {
+        width: 150,
+        height: 50,
+        text: { value: '', height: 25 },
+        command: { name: nil }
+      }
+    end
+
+    def create_buttons(opts)
+      buttons = []
+      y_offset = height * 0.25
+      opts[:names].each_with_index do |name, i|
+        options = buttons_opts
+        options[:text][:value] = name
+        options[:command][:name] = opts[:commands][i]
+        buttons << UIElements::Button.new(self, width * 0.05, y_offset, options)
+        y_offset += height * 0.1
+      end
+      buttons
+    end
+
+    def create_buttons_commands(buttons)
+      buttons.each do |button|
+        button.create_command do
+          window.send @command_name unless @command_name.nil?
+        end
+      end
+    end
+
+    def update_buttons(buttons)
+      buttons.each do |button|
+        button.mouse_entered do |this|
+          this.color = 0xff_e7_6f_0d
+        end
+        button.mouse_exited do |this|
+          this.color = 0xff_ff_ff_ff
+        end
+        button.mouse_pressed(&:command)
+        button.mouse_released { ; }
+      end
     end
   end
 end
