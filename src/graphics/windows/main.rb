@@ -44,7 +44,7 @@ module Windows
     end
 
     def button_down(id)
-      toggle_menu if id == Gosu::KbEscape
+      toggle_menu if [Gosu::KbEscape, Gosu::GP_BUTTON_6].include?(id)
     end
 
     def return_menu
@@ -192,10 +192,14 @@ module Windows
     end
 
     def update_player
-      @player.accelerate if Gosu.button_down?(Gosu::KbW)
-      @player.turn_left if Gosu.button_down?(Gosu::KbA)
-      @player.turn_right if Gosu.button_down?(Gosu::KbD)
-      if Gosu.button_down? Gosu::KbLeftShift
+      @player.accelerate if Gosu.button_down?(Gosu::KbW) ||
+                            Gosu.button_down?(Gosu::GP_UP)
+      @player.turn_left if Gosu.button_down?(Gosu::KbA) ||
+                           Gosu.button_down?(Gosu::GP_LEFT)
+      @player.turn_right if Gosu.button_down?(Gosu::KbD) ||
+                            Gosu.button_down?(Gosu::GP_RIGHT)
+      if Gosu.button_down?(Gosu::KbLeftShift) ||
+         Gosu.button_down?(Gosu::GP_BUTTON_0)
         @player.speed_up
       else
         @player.speed_down
@@ -209,7 +213,8 @@ module Windows
     end
 
     def update_game
-      Game.toggle_pause if Gosu.button_down?(Gosu::KbP)
+      Game.toggle_pause if Gosu.button_down?(Gosu::KbP) ||
+                           Gosu.button_down?(Gosu::GP_BUTTON_4)
       return if Game.paused?
       update_player
       update_humans
