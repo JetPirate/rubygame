@@ -1,41 +1,52 @@
 # Represents mouse events
 module MouseEvents
-  attr_accessor :press_captured, :release_captured
+  # States mouse can get into
+  module MState
+    UNDEF, IN, OUT, PRESSED, RELEASED, CLICKED = *0..4
+  end
 
-  @press_captured = false
-  @release_captured = false
+  def mouse_init_events
+    @prev_mstate = MState::UNDEF
+  end
 
   def mouse_pressed
     return unless mouse_in?
     return unless Gosu.button_down?(Gosu::MS_LEFT)
-    return if @press_captured
-    yield self
-    @press_captured = true
-    @release_captured = false
+    return if @prev_mstate == MState::PRESSED
+    yield self if block_given?
+    @prev_mstate = MState::PRESSED
   end
 
   def mouse_released
-    return unless @press_captured
     return unless mouse_in?
-    return if Gosu.button_down?(Gosu::MS_LEFT)
-    return if @release_captured
-    yield self
-    @release_captured = true
-    @press_captured = false
+    return if Gosu.button_down?(Gosu::MS_LEFT) ||
+              @prev_mstate == MState::RELEASED ||
+              @prev_mstate != MState::PRESSED
+    yield self if block_given?
+    @prev_mstate = MState::RELEASED
   end
 
   def mouse_entered
     return unless mouse_in?
-    yield self
+    return if @prev_mstate == MState::IN
+    return unless @prev_mstate == MState::OUT || @prev_mstate == MState::UNDEF
+    yield self if block_given?
+    @prev_mstate = MState::IN
   end
 
   def mouse_exited
     return if mouse_in?
-    yield self
+    return unless @prev_mstate == MState::IN
+    yield self if block_given?
+    @prev_mstate = MState::OUT
   end
 
   def mouse_clicked
-    raise NotImplementedError
+    mouse_pressed
+    return unless @prev_mstate == MState::PRESSED &&
+                  !Gosu.button_down?(Gosu::MS_LEFT)
+    yield self if block_given?
+    @prev_mstate = MState::OUT
   end
 
   private
@@ -44,7 +55,8 @@ module MouseEvents
     # OPTIMIZE: don't check every time
     if @x <= @window.mouse_x && @window.mouse_x <= @x + @width \
       && @y <= @window.mouse_y && @window.mouse_y <= @y + @height
-      true
+      return true
     end
+    false
   end
 end

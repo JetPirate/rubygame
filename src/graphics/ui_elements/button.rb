@@ -3,9 +3,10 @@ require_relative '../../events'
 # Represents GUI elements
 module UIElements
   # Represents a button
+  # rubocop:disable ClassLength
   class Button
     include MouseEvents
-    attr_reader :x, :y, :z, :width, :height, :image, :value, :color, :a, :window
+    attr_reader :x, :y, :z, :width, :height, :image, :value, :color, :window
 
     def initialize(window, x, y, options = {})
       @window = window
@@ -13,7 +14,7 @@ module UIElements
       @y = y
       @z = ZOrder::UIOrder::BUTTON
       parse(options)
-      @a = 1
+      mouse_init_events
     end
 
     def draw(image_opts = {}, text_opts = {})
@@ -24,7 +25,6 @@ module UIElements
     end
 
     def value=(value)
-      @a += 1
       @value = value
       normalize_text
     end
@@ -128,4 +128,5 @@ module UIElements
         compute_aligning(options[:text][:align] || :left)
     end
   end
+  # rubocop:enable ClassLength
 end

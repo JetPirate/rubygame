@@ -3,6 +3,7 @@ require_relative 'states'
 # Represents game windows
 module Windows
   # Represents a main game window
+  # rubocop:disable ClassLength
   class Main < Gosu::Window
     include Resources
     include States
@@ -262,6 +263,7 @@ module Windows
       end
     end
 
+    # rubocop:disable MethodLength
     def update_buttons(buttons)
       buttons.each do |button|
         button.mouse_entered do |this|
@@ -270,9 +272,13 @@ module Windows
         button.mouse_exited do |this|
           this.color = 0xff_ff_ff_ff
         end
-        button.mouse_pressed(&:command)
-        button.mouse_released { ; }
+        button.mouse_clicked do |this|
+          this.command
+          this.color = 0xff_ff_ff_ff
+        end
       end
     end
+    # rubocop:enable MethodLength
   end
+  # rubocop:enable ClassLength
 end
