@@ -2,17 +2,16 @@ require 'yaml'
 # Represents module for game settings
 module SettingsFile
   def self.load
-    @settings ||= SettingsFile.fetch
+    @settings || SettingsFile.fetch
   end
 
   def self.fetch
-    settings = begin
+    @settings = begin
       YAML.safe_load(File.open('settings.yaml'), [Hash, Symbol])
     rescue StandardError => e
       puts "Could not load settings: #{e.message}"
     end
-    return SettingsFile.default if settings.nil? || settings.empty?
-    settings
+    SettingsFile.create if @settings.nil? || @settings.empty?
   end
 
   def self.get(setting)
@@ -28,14 +27,15 @@ module SettingsFile
     SettingsFile.load
   end
 
-  def self.default
-    {
-      fullscreen: false,
-      width: 640,
-      height: 480,
+  def self.create
+    @settings = {
+      fullscreen: true,
+      width: 1920,
+      height: 1080,
       music: true,
       music_volume: 0.5
     }
+    SettingsFile.save
   end
 
   def self.save
