@@ -8,7 +8,8 @@ module Textures
       player_1_stage: Gosu::Image.new('img/deathcar.bmp'),
       human: Gosu::Image.load_tiles('img/males.png', 25, 25),
       human_dead: Gosu::Image.new('img/dead.bmp'),
-      default_button: Gosu::Image.new('img/default_button.bmp'),
+      default_label: Gosu::Image.new('img/default.bmp'),
+      default_input_field: Gosu::Image.new('img/default.bmp'),
       controls: Gosu::Image.new('img/controls.jpg'),
       sett_background: Gosu::Image.new('img/sett_background.jpg')
     }

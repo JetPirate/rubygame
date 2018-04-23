@@ -1,5 +1,3 @@
-require_relative '../resources'
-require_relative 'states'
 # Represents game windows
 module Windows
   # Represents a main game window
@@ -49,12 +47,12 @@ module Windows
 
     def return_menu
       SettingsFile.save
-      self.caption = CAPTION_PAUSE
+      self.caption = Captions::PAUSE
       @state = MENU
     end
 
     def show_controls
-      self.caption = CAPTION_CONTROLS
+      self.caption = Captions::CONTROLS
       @state = CONTROLS
     end
 
@@ -160,7 +158,7 @@ module Windows
 
     def load_defaults
       self.fullscreen = SettingsFile.get(:fullscreen)
-      self.caption = CAPTION_GAME
+      self.caption = Captions::GAME
       load_game_textures
       @humans = []
       @dead_humans = []
@@ -272,14 +270,14 @@ module Windows
     def update_buttons(buttons)
       buttons.each do |button|
         button.mouse_entered do |this|
-          this.color = 0xff_e7_6f_0d
+          this.color = Colors::TEXT_MAIN
         end
         button.mouse_exited do |this|
-          this.color = 0xff_ff_ff_ff
+          this.color = Colors::WHITE
         end
         button.mouse_clicked do |this|
           this.command
-          this.color = 0xff_ff_ff_ff
+          this.color = Colors::WHITE
         end
       end
     end
