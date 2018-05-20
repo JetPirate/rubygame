@@ -17,4 +17,66 @@ module Resources
     TEXT_MAIN = 0xff_e7_6f_0d #e76f0d
     # rubocop:enable LeadingCommentSpace
   end
+  module Controls
+    # rubocop:disable MethodLength, CyclomaticComplexity
+    def self.key_id_to_s(id)
+      case id
+      when Gosu::KbQ         then 'Q'
+      when Gosu::KbW         then 'W'
+      when Gosu::KbE         then 'E'
+      when Gosu::KbR         then 'R'
+      when Gosu::KbT         then 'T'
+      when Gosu::KbY         then 'Y'
+      when Gosu::KbU         then 'U'
+      when Gosu::KbI         then 'I'
+      when Gosu::KbO         then 'O'
+      when Gosu::KbP         then 'P'
+      when Gosu::KbA         then 'A'
+      when Gosu::KbS         then 'S'
+      when Gosu::KbD         then 'D'
+      when Gosu::KbF         then 'F'
+      when Gosu::KbG         then 'G'
+      when Gosu::KbH         then 'H'
+      when Gosu::KbJ         then 'J'
+      when Gosu::KbK         then 'K'
+      when Gosu::KbL         then 'L'
+      when Gosu::KbZ         then 'Z'
+      when Gosu::KbX         then 'X'
+      when Gosu::KbC         then 'C'
+      when Gosu::KbV         then 'V'
+      when Gosu::KbB         then 'B'
+      when Gosu::KbN         then 'N'
+      when Gosu::KbM         then 'M'
+      when Gosu::KbLeftShift then 'LShift'
+      when Gosu::Kb1         then '1'
+      when Gosu::Kb2         then '2'
+      when Gosu::Kb3         then '3'
+      when Gosu::Kb4         then '4'
+      when Gosu::Kb5         then '5'
+      when Gosu::Kb6         then '6'
+      when Gosu::Kb7         then '7'
+      when Gosu::Kb8         then '8'
+      when Gosu::Kb9         then '9'
+      when Gosu::Kb0         then '0'
+      when Gosu::KbEscape    then 'ESC'
+      else
+        'Undefined'
+      end
+    end
+
+    def self.s_to_key_id(s)
+      case s
+      when 'W'      then Gosu::KbW
+      when 'S'      then Gosu::KbS
+      when 'A'      then Gosu::KbA
+      when 'D'      then Gosu::KbD
+      when 'LShift' then Gosu::KbLeftShift
+      when 'P'      then Gosu::KbP
+      when '0'      then Gosu::Kb0
+      when '9'      then Gosu::Kb9
+      when 'ESC'    then Gosu::KbEscape
+      end
+    end
+    # rubocop:enable MethodLength, CyclomaticComplexity
+  end
 end

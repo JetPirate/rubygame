@@ -9,8 +9,9 @@ module Textures
       human: Gosu::Image.load_tiles('img/males.png', 25, 25),
       human_dead: Gosu::Image.new('img/dead.bmp'),
       default_label: Gosu::Image.new('img/default.bmp'),
-      default_input_field: Gosu::Image.new('img/default.bmp'),
+      default_input_field: Gosu::Image.new('img/default_input_field.bmp'),
       controls: Gosu::Image.new('img/controls.jpg'),
+      press_key: Gosu::Image.new('img/press_key.bmp'),
       sett_background: Gosu::Image.new('img/sett_background.jpg')
     }
   end

@@ -8,5 +8,6 @@ module ZOrder
     LABEL = ZOrder::UI
     LABEL_TEXT = LABEL + 1
     TEXT = ZOrder::UI + 1
+    ACTION_REQUIRED = UIOrder::TEXT + 1
   end
 end

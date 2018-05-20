@@ -27,16 +27,29 @@ module SettingsFile
     SettingsFile.load
   end
 
+  # rubocop:disable MethodLength
   def self.create
     @settings = {
       fullscreen: true,
       width: 1920,
       height: 1080,
       music: true,
-      music_volume: 0.5
+      music_volume: 0.5,
+      controls: {
+        UP: Gosu::KbW,
+        DOWN: Gosu::KbS,
+        LEFT: Gosu::KbA,
+        RIGHT: Gosu::KbD,
+        :"SPEED UP" => Gosu::KbLeftShift,
+        PAUSE: Gosu::KbP,
+        :"MUSIC UP" => Gosu::Kb0,
+        :"MUSIC DOWN" => Gosu::Kb9,
+        BACK: Gosu::KbEscape
+      }
     }
     SettingsFile.save
   end
+  # rubocop:enable MethodLength
 
   def self.save
     File.open('settings.yaml', 'w') { |f| f.write(@settings.to_yaml) }

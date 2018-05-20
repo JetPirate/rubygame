@@ -8,8 +8,8 @@ module Windows
     def initialize
       super SettingsFile.get(:width), SettingsFile.get(:height)
       load_menu
-      load_controls
       load_defaults
+      load_controls
       load_player(SettingsFile.get(:width) / 2, SettingsFile.get(:height) / 2)
       set_music
       @state = GAME
@@ -21,8 +21,6 @@ module Windows
         update_game
       when MENU
         update_menu
-      when CONTROLS
-        update_controls
       end
     end
 
@@ -32,8 +30,6 @@ module Windows
         draw_game
       when MENU
         draw_menu
-      when CONTROLS
-        draw_controls
       end
     end
 
@@ -42,18 +38,13 @@ module Windows
     end
 
     def button_down(id)
-      toggle_menu if [Gosu::KbEscape, Gosu::GP_BUTTON_6].include?(id)
+      toggle_menu if @controls[:BACK].include?(id)
     end
 
     def return_menu
       SettingsFile.save
       self.caption = Captions::PAUSE
       @state = MENU
-    end
-
-    def show_controls
-      self.caption = Captions::CONTROLS
-      @state = CONTROLS
     end
 
     def return_main_menu
@@ -68,6 +59,11 @@ module Windows
     end
 
     private
+
+    def load_controls
+      @controls = SettingsFile.get(:controls)
+      @controls[:BACK] = [@controls[:BACK], Gosu::GP_BUTTON_6]
+    end
 
     # menu
 
@@ -106,40 +102,8 @@ module Windows
 
     def menu_buttons_opts
       {
-        names: %w[CONTROLS END QUIT],
-        commands: %i[show_controls return_main_menu exit_game]
-      }
-    end
-
-    # controls
-
-    def load_controls_textures
-      @controls_background = Textures.get(:controls)
-    end
-
-    def load_controls
-      load_controls_textures
-      @controls_buttons = create_buttons(controls_buttons_opts)
-      create_buttons_commands(@controls_buttons)
-    end
-
-    def draw_controls_buttons
-      @controls_buttons.map(&:draw)
-    end
-
-    def draw_controls
-      @controls_background.draw(0, 0, ZOrder::BACKGROUND)
-      draw_controls_buttons
-    end
-
-    def update_controls
-      update_buttons(@controls_buttons)
-    end
-
-    def controls_buttons_opts
-      {
-        names: ['BACK'],
-        commands: %i[return_menu]
+        names: %w[END QUIT],
+        commands: %i[return_main_menu exit_game]
       }
     end
 
@@ -148,7 +112,6 @@ module Windows
     def load_game_textures
       @background = Textures.get(:background)
       @score_font = Gosu::Font.new(20)
-      @controls_page = Textures.get(:controls)
     end
 
     def player_interaction
@@ -190,13 +153,13 @@ module Windows
     end
 
     def update_player
-      @player.accelerate if Gosu.button_down?(Gosu::KbW) ||
+      @player.accelerate if Gosu.button_down?(@controls[:UP]) ||
                             Gosu.button_down?(Gosu::GP_UP)
-      @player.turn_left if Gosu.button_down?(Gosu::KbA) ||
+      @player.turn_left if Gosu.button_down?(@controls[:LEFT]) ||
                            Gosu.button_down?(Gosu::GP_LEFT)
-      @player.turn_right if Gosu.button_down?(Gosu::KbD) ||
+      @player.turn_right if Gosu.button_down?(@controls[:RIGHT]) ||
                             Gosu.button_down?(Gosu::GP_RIGHT)
-      if Gosu.button_down?(Gosu::KbLeftShift) ||
+      if Gosu.button_down?(@controls[:"SPEED UP"]) ||
          Gosu.button_down?(Gosu::GP_BUTTON_0)
         @player.speed_up
       else
@@ -211,7 +174,7 @@ module Windows
     end
 
     def update_game
-      Game.toggle_pause if Gosu.button_down?(Gosu::KbP) ||
+      Game.toggle_pause if Gosu.button_down?(@controls[:PAUSE]) ||
                            Gosu.button_down?(Gosu::GP_BUTTON_4)
       return if Game.paused?
       update_player
@@ -232,8 +195,8 @@ module Windows
     end
 
     def update_music(volume = 0.05)
-      @music.volume += volume if Gosu.button_down?(Gosu::Kb0)
-      @music.volume -= volume if Gosu.button_down?(Gosu::Kb9)
+      @music.volume += volume if Gosu.button_down?(@controls[:"MUSIC UP"])
+      @music.volume -= volume if Gosu.button_down?(@controls[:"MUSIC DOWN"])
     end
 
     def buttons_opts

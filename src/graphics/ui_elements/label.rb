@@ -54,7 +54,6 @@ module UIElements
       add_image(options[:image] || Textures.get(:default_label))
       add_text(options[:text])
       add_drawing(options)
-      @command_name = options[:command][:name]
     end
 
     def add_drawing(options)

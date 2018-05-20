@@ -1,16 +1,12 @@
 module UIElements
   # Represents an input field
   class InputField < Label
+    attr_accessor :input
+
     def initialize(window, x, y, options = {})
+      options[:image] ||= Textures.get(:default_input_field)
       super(window, x, y, options)
+      @input = options[:input]
     end
-
-    def draw(*); end
-
-    def update(*); end
-
-    private
-
-    def parse(_options); end
   end
 end
