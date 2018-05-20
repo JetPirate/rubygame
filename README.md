@@ -27,12 +27,10 @@ After installation:
 $ cd rubygame
 $ ./rubygame
 ```
- - **Enter** to play
  - **WASD** to move
  - **Shift** to speed up
  - **P** to (un)pauze
  - **9** or **0** to control music volume
- - **C** to show controls
  - **ESC** to exit
 
 ### Installation
