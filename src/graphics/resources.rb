@@ -23,6 +23,7 @@ module Resources
       case id
       when Gosu::KbQ         then 'Q'
       when Gosu::KbW         then 'W'
+      when Gosu::GP_UP       then 'UP'
       when Gosu::KbE         then 'E'
       when Gosu::KbR         then 'R'
       when Gosu::KbT         then 'T'
@@ -31,9 +32,13 @@ module Resources
       when Gosu::KbI         then 'I'
       when Gosu::KbO         then 'O'
       when Gosu::KbP         then 'P'
+      when Gosu::GP_BUTTON_4 then 'Button 4'
       when Gosu::KbA         then 'A'
+      when Gosu::GP_LEFT     then 'LEFT'
       when Gosu::KbS         then 'S'
+      when Gosu::GP_DOWN     then 'DOWN'
       when Gosu::KbD         then 'D'
+      when Gosu::GP_RIGHT    then 'RIGHT'
       when Gosu::KbF         then 'F'
       when Gosu::KbG         then 'G'
       when Gosu::KbH         then 'H'
@@ -48,6 +53,7 @@ module Resources
       when Gosu::KbN         then 'N'
       when Gosu::KbM         then 'M'
       when Gosu::KbLeftShift then 'LShift'
+      when Gosu::GP_BUTTON_0 then 'Button 0'
       when Gosu::Kb1         then '1'
       when Gosu::Kb2         then '2'
       when Gosu::Kb3         then '3'
@@ -59,6 +65,7 @@ module Resources
       when Gosu::Kb9         then '9'
       when Gosu::Kb0         then '0'
       when Gosu::KbEscape    then 'ESC'
+      when Gosu::GP_BUTTON_6 then 'Button 6'
       else
         'Undefined'
       end

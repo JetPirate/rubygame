@@ -38,7 +38,7 @@ module Windows
     end
 
     def button_down(id)
-      toggle_menu if @controls[:BACK].include?(id)
+      toggle_menu if @controls[:BACK] == id
     end
 
     def return_menu
@@ -61,8 +61,8 @@ module Windows
     private
 
     def load_controls
-      @controls = SettingsFile.get(:controls)
-      @controls[:BACK] = [@controls[:BACK], Gosu::GP_BUTTON_6]
+      mode = SettingsFile.get(:controls_mode)
+      @controls = SettingsFile.get(:controls)[mode]
     end
 
     # menu
@@ -153,14 +153,10 @@ module Windows
     end
 
     def update_player
-      @player.accelerate if Gosu.button_down?(@controls[:UP]) ||
-                            Gosu.button_down?(Gosu::GP_UP)
-      @player.turn_left if Gosu.button_down?(@controls[:LEFT]) ||
-                           Gosu.button_down?(Gosu::GP_LEFT)
-      @player.turn_right if Gosu.button_down?(@controls[:RIGHT]) ||
-                            Gosu.button_down?(Gosu::GP_RIGHT)
-      if Gosu.button_down?(@controls[:"SPEED UP"]) ||
-         Gosu.button_down?(Gosu::GP_BUTTON_0)
+      @player.accelerate if Gosu.button_down?(@controls[:UP])
+      @player.turn_left if Gosu.button_down?(@controls[:LEFT])
+      @player.turn_right if Gosu.button_down?(@controls[:RIGHT])
+      if Gosu.button_down?(@controls[:"SPEED UP"])
         @player.speed_up
       else
         @player.speed_down
@@ -174,8 +170,7 @@ module Windows
     end
 
     def update_game
-      Game.toggle_pause if Gosu.button_down?(@controls[:PAUSE]) ||
-                           Gosu.button_down?(Gosu::GP_BUTTON_4)
+      Game.toggle_pause if Gosu.button_down?(@controls[:PAUSE])
       return if Game.paused?
       update_player
       update_humans

@@ -1,4 +1,5 @@
 require 'yaml'
+
 # Represents module for game settings
 module SettingsFile
   def self.load
@@ -7,7 +8,7 @@ module SettingsFile
 
   def self.fetch
     @settings = begin
-      YAML.safe_load(File.open('settings.yaml'), [Hash, Symbol])
+      YAML.safe_load(File.open('settings.yaml'), [Hash, Symbol, Array])
     rescue StandardError => e
       puts "Could not load settings: #{e.message}"
     end
@@ -35,16 +36,30 @@ module SettingsFile
       height: 1080,
       music: true,
       music_volume: 0.5,
+      controls_mode: :keyboard,
       controls: {
-        UP: Gosu::KbW,
-        DOWN: Gosu::KbS,
-        LEFT: Gosu::KbA,
-        RIGHT: Gosu::KbD,
-        :"SPEED UP" => Gosu::KbLeftShift,
-        PAUSE: Gosu::KbP,
-        :"MUSIC UP" => Gosu::Kb0,
-        :"MUSIC DOWN" => Gosu::Kb9,
-        BACK: Gosu::KbEscape
+        keyboard: {
+          UP: Gosu::KbW,
+          DOWN: Gosu::KbS,
+          LEFT: Gosu::KbA,
+          RIGHT: Gosu::KbD,
+          :"SPEED UP" => Gosu::KbLeftShift,
+          PAUSE: Gosu::KbP,
+          :"MUSIC UP" => Gosu::Kb0,
+          :"MUSIC DOWN" => Gosu::Kb9,
+          BACK: Gosu::KbEscape
+        },
+        gamepad: {
+          UP: Gosu::GP_UP,
+          DOWN: Gosu::GP_DOWN,
+          LEFT: Gosu::GP_LEFT,
+          RIGHT: Gosu::GP_RIGHT,
+          :"SPEED UP" => Gosu::GP_BUTTON_0,
+          PAUSE: Gosu::GP_BUTTON_4,
+          :"MUSIC UP" => Gosu::Kb0, # TODO
+          :"MUSIC DOWN" => Gosu::Kb9,
+          BACK: Gosu::GP_BUTTON_6
+        }
       }
     }
     SettingsFile.save

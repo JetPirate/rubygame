@@ -343,11 +343,12 @@ module Windows
     def create_input_fields(opts)
       fields = []
       y_offset = height * 0.10
+      mode = SettingsFile.get(:controls_mode)
       opts[:names].each do |name|
         options = input_fields_opts
         options[:command][:name] = opts[:commands][0]
         options[:extensions] = {}
-        options[:extensions][:key_id] = SettingsFile.get(:controls)[name.to_sym]
+        options[:extensions][:key_id] = SettingsFile.get(:controls)[mode][name.to_sym]
         options[:text][:value] = Controls.key_id_to_s(
           options[:extensions][:key_id]
         )
