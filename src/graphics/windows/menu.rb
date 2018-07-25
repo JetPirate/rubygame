@@ -87,6 +87,18 @@ module Windows
       self.fullscreen = value
     end
 
+    def toggle_controls_mode
+      mode = SettingsFile.get(:controls_mode)
+      mode = case mode
+             when :keyboard then :gamepad
+             when :gamepad  then :keyboard
+             else :keyboard
+             end
+      SettingsFile.set(:controls_mode, mode)
+      SettingsFile.save
+      load_controls
+    end
+
     def restart
       SettingsFile.save
       Game.reload
@@ -225,8 +237,8 @@ module Windows
 
     def controls_buttons_opts
       {
-        names: %w[BACK SAVE],
-        commands: %i[return_menu save_controls]
+        names: %w[BACK SAVE KEYBOARD/GAMEPAD],
+        commands: %i[return_menu save_controls toggle_controls_mode]
       }
     end
 
