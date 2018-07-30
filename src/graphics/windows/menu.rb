@@ -251,12 +251,15 @@ module Windows
     end
 
     def controls
-      {}.tap do |keys|
+      mode = SettingsFile.get(:controls_mode)
+      current_controls = SettingsFile.get(:controls)
+      current_controls[mode] = {}.tap do |keys|
         @controls_input_fields.each_with_index do |field, i|
           action = controls_input_opts[:names][i].to_sym
           keys[action] = field.extensions[:key_id]
         end
       end
+      current_controls
     end
 
     # music
