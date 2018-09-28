@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Module for textures
 module Textures
   def self.load

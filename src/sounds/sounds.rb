@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Module for sounds
 module Sounds
   def self.load

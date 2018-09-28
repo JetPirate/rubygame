@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents mouse events
 module MouseEvents
   # States mouse can get into

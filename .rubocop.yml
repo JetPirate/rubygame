@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 2.5
+  Exclude:
+    - rubygame
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false

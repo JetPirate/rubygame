@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require_relative '../../events'
 
 module UIElements
   # Represents a label
   class Label < UIElement
     include MouseEvents
+    include Resources
     attr_reader :image, :value, :color
 
     def initialize(window, x, y, options)
@@ -43,8 +46,7 @@ module UIElements
 
     def add_text(options = {})
       @value = options[:value] || ''
-      height = options[:height] || @height
-      @font = options[:font] || Gosu::Font.new(height)
+      @font = options[:font] || Gosu::Font.new(options[:height] || @height)
     end
 
     protected
@@ -88,10 +90,10 @@ module UIElements
 
     def normalize_text
       text_width = @font.text_width(@value)
-      if (text_width - @width) > 0
+      if (text_width - @width).positive?
         @drawing[:text][:scale_x] = 1.0 / (text_width / @width)
       end
-      return unless (@font.height - @height) > 0
+      return unless (@font.height - @height).positive?
       @drawing[:text][:scale_y] = 1.0 / (@font.height / @height)
     end
 

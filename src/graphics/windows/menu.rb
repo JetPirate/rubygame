@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents game windows
 module Windows
   # Represents a menu window
@@ -295,7 +297,7 @@ module Windows
       {
         width: 150,
         height: 50,
-        text: { value: '', height: 25 },
+        text: { value: '', height: 25, font: Gosu::Font.new(25) },
         command: { name: nil }
       }
     end
@@ -304,7 +306,10 @@ module Windows
       {
         width: 150,
         height: 50,
-        text: { value: '', height: 25, align: :right }
+        text: {
+          value: '', height: 25, align: :right,
+          font: Gosu::Font.new(25)
+        }
       }
     end
 
@@ -313,7 +318,7 @@ module Windows
         width: 150,
         height: 50,
         image: Textures.get(:default_input_field),
-        text: { value: '', height: 25, align: :left },
+        text: { value: '', height: 25, align: :left, font: Gosu::Font.new(25) },
         command: { name: nil }
       }
     end

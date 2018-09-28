@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
+# Module with resources such as color, key maps, etc
 module Resources
   module Captions
-    # rubocop:disable MutableConstant
     MAIN_MENU = 'MENU'
     GAME = 'GAME'
     SETTINGS = 'SETTINGS'
     CONTROLS = 'CONTROLS'
     PAUSE = 'PAUSE'
-    # rubocop:enable MutableConstant
   end
   module Colors
     # rubocop:disable LeadingCommentSpace

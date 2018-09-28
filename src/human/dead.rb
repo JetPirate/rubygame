@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a human
 module Human
   # Represents a dead human

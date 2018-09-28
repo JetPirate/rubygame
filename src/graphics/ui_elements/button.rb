@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UIElements
   # Represents a button
   class Button < Label

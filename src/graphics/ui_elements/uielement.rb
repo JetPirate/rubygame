@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents GUI elements
 module UIElements
   # Represents an ui element

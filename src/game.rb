@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'settings_file'
 require_relative 'graphics'
 require_relative 'sounds'

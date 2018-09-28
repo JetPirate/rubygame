@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 
 # Represents module for game settings
@@ -7,11 +9,10 @@ module SettingsFile
   end
 
   def self.fetch
-    @settings = begin
-      YAML.safe_load(File.open('settings.yaml'), [Hash, Symbol, Array])
-    rescue StandardError => e
-      puts "Could not load settings: #{e.message}"
-    end
+    @settings = YAML.safe_load(File.open('settings.yaml'), [Hash, Symbol, Array])
+  rescue StandardError => e
+    puts "Could not load settings: #{e.message}"
+  ensure
     SettingsFile.create if @settings.nil? || @settings.empty?
   end
 
@@ -43,10 +44,10 @@ module SettingsFile
           DOWN: Gosu::KbS,
           LEFT: Gosu::KbA,
           RIGHT: Gosu::KbD,
-          :"SPEED UP" => Gosu::KbLeftShift,
+          "SPEED UP": Gosu::KbLeftShift,
           PAUSE: Gosu::KbP,
-          :"MUSIC UP" => Gosu::Kb0,
-          :"MUSIC DOWN" => Gosu::Kb9,
+          "MUSIC UP": Gosu::Kb0,
+          "MUSIC DOWN": Gosu::Kb9,
           BACK: Gosu::KbEscape
         },
         gamepad: {
@@ -54,10 +55,10 @@ module SettingsFile
           DOWN: Gosu::GP_DOWN,
           LEFT: Gosu::GP_LEFT,
           RIGHT: Gosu::GP_RIGHT,
-          :"SPEED UP" => Gosu::GP_BUTTON_0,
+          "SPEED UP": Gosu::GP_BUTTON_0,
           PAUSE: Gosu::GP_BUTTON_4,
-          :"MUSIC UP" => Gosu::Kb0, # TODO
-          :"MUSIC DOWN" => Gosu::Kb9,
+          "MUSIC UP": Gosu::Kb0, # TODO
+          "MUSIC DOWN": Gosu::Kb9,
           BACK: Gosu::GP_BUTTON_6
         }
       }

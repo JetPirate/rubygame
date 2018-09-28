@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UIElements
   # Represents an input field
   class InputField < Label

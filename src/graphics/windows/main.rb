@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents game windows
 module Windows
   # Represents a main game window
