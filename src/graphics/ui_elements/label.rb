@@ -76,16 +76,16 @@ module UIElements
     end
 
     def draw_text(text_opts = {})
-      @font.draw_rel(@value,
-                     @x + text_opts[:x_offset],
-                     @y + text_opts[:y_offset],
-                     ZOrder::UIOrder::LABEL_TEXT,
-                     text_opts[:rel_x],
-                     text_opts[:rel_y],
-                     text_opts[:scale_x] || 1.0,
-                     text_opts[:scale_y] || 1.0,
-                     text_opts[:color] || WHITE,
-                     text_opts[:mode] || :default)
+      @font.draw_text_rel(@value,
+                          @x + text_opts[:x_offset],
+                          @y + text_opts[:y_offset],
+                          ZOrder::UIOrder::LABEL_TEXT,
+                          text_opts[:rel_x],
+                          text_opts[:rel_y],
+                          text_opts[:scale_x] || 1.0,
+                          text_opts[:scale_y] || 1.0,
+                          text_opts[:color] || WHITE,
+                          text_opts[:mode] || :default)
     end
 
     def normalize_text
