@@ -3,6 +3,7 @@ img/*.*
 wav/*.*
 img-hd/*.*
 fonts/*
+tmp/*
 TODO
 Gemfile.lock
 settings.yaml

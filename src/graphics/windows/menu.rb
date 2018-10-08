@@ -297,7 +297,7 @@ module Windows
       {
         width: 150,
         height: 50,
-        text: { value: '', height: 25, font: Gosu::Font.new(25) },
+        text: { value: '', height: 25 },
         command: { name: nil }
       }
     end
@@ -306,10 +306,7 @@ module Windows
       {
         width: 150,
         height: 50,
-        text: {
-          value: '', height: 25, align: :right,
-          font: Gosu::Font.new(25)
-        }
+        text: { value: '', height: 25, align: :right }
       }
     end
 
@@ -318,7 +315,7 @@ module Windows
         width: 150,
         height: 50,
         image: Textures.get(:default_input_field),
-        text: { value: '', height: 25, align: :left, font: Gosu::Font.new(25) },
+        text: { value: '', height: 25, align: :left },
         command: { name: nil }
       }
     end

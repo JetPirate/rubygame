@@ -2,6 +2,8 @@
 
 # Module for textures
 module Textures
+  include Resources
+
   def self.load
     @textures ||= {
       background: Gosu::Image.new('img/background.jpg', tileable: true),
@@ -14,7 +16,8 @@ module Textures
       default_input_field: Gosu::Image.new('img/default_input_field.bmp'),
       controls: Gosu::Image.new('img/controls.jpg'),
       press_key: Gosu::Image.new('img/press_key.bmp'),
-      sett_background: Gosu::Image.new('img/sett_background.jpg')
+      sett_background: Gosu::Image.new('img/sett_background.jpg'),
+      default_font: Gosu::Font.new(25, name: Files.font('default.ttf'))
     }
   end
 

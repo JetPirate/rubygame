@@ -113,7 +113,7 @@ module Windows
 
     def load_game_textures
       @background = Textures.get(:background)
-      @score_font = Gosu::Font.new(20)
+      @score_font = Textures.get(:default_font)
     end
 
     def player_interaction
@@ -135,7 +135,7 @@ module Windows
     end
 
     def draw_score
-      @score_font.draw(
+      @score_font.draw_markup(
         "Killed: #{@player.score}",
         10,
         10,

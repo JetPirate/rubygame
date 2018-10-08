@@ -2,6 +2,12 @@
 
 # Module with resources such as color, key maps, etc
 module Resources
+  # Contains file names, pathes, etc
+  module Files
+    def self.font(name)
+      File.join(__dir__, '../../fonts/', name)
+    end
+  end
   module Captions
     MAIN_MENU = 'MENU'
     GAME = 'GAME'
@@ -16,8 +22,9 @@ module Resources
     TEXT_MAIN = 0xff_e7_6f_0d #e76f0d
     # rubocop:enable LeadingCommentSpace
   end
+  # Contains key mapping, etc
   module Controls
-    # rubocop:disable MethodLength, CyclomaticComplexity
+    # rubocop:disable all
     def self.key_id_to_s(id)
       case id
       when Gosu::KbQ         then 'Q'
@@ -147,6 +154,6 @@ module Resources
         'Undefined'
       end
     end
-    # rubocop:enable MethodLength, CyclomaticComplexity
+    # rubocop:enable all
   end
 end

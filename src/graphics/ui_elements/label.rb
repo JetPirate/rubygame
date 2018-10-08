@@ -19,7 +19,7 @@ module UIElements
       @drawing[:image].merge!(image_opts) unless image_opts.nil?
       @drawing[:text].merge!(text_opts) unless text_opts.nil?
       draw_image
-      draw_text(@drawing[:text])
+      draw_markup(@drawing[:text])
     end
 
     def update(*); end
@@ -46,7 +46,7 @@ module UIElements
 
     def add_text(options = {})
       @value = options[:value] || ''
-      @font = options[:font] || Gosu::Font.new(options[:height] || @height)
+      @font = options[:font] || Textures.get(:default_font)
     end
 
     protected
@@ -75,21 +75,21 @@ module UIElements
                   image_opts[:mode] || :default)
     end
 
-    def draw_text(text_opts = {})
-      @font.draw_text_rel(@value,
-                          @x + text_opts[:x_offset],
-                          @y + text_opts[:y_offset],
-                          ZOrder::UIOrder::LABEL_TEXT,
-                          text_opts[:rel_x],
-                          text_opts[:rel_y],
-                          text_opts[:scale_x] || 1.0,
-                          text_opts[:scale_y] || 1.0,
-                          text_opts[:color] || WHITE,
-                          text_opts[:mode] || :default)
+    def draw_markup(text_opts = {})
+      @font.draw_markup_rel(@value,
+                            @x + text_opts[:x_offset],
+                            @y + text_opts[:y_offset],
+                            ZOrder::UIOrder::LABEL_TEXT,
+                            text_opts[:rel_x],
+                            text_opts[:rel_y],
+                            text_opts[:scale_x] || 1.0,
+                            text_opts[:scale_y] || 1.0,
+                            text_opts[:color] || WHITE,
+                            text_opts[:mode] || :default)
     end
 
     def normalize_text
-      text_width = @font.text_width(@value)
+      text_width = @font.markup_width(@value)
       if (text_width - @width).positive?
         @drawing[:text][:scale_x] = 1.0 / (text_width / @width)
       end
