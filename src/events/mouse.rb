@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 # Represents mouse events
+# TODO: Should be async
+# BUG: Broken
 module MouseEvents
   # States mouse can get into
   module MState
-    UNDEF, IN, OUT, PRESSED, RELEASED, CLICKED = *0..4
+    UNDEF, IN, OUT, PRESSED, RELEASED, CLICKED = *0..5
   end
 
-  def mouse_init_events
+  def init_mouse_events
     @prev_mstate = MState::UNDEF
   end
 

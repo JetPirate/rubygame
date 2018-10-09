@@ -48,7 +48,8 @@ module SettingsFile
           PAUSE: Gosu::KbP,
           "MUSIC UP": Gosu::Kb0,
           "MUSIC DOWN": Gosu::Kb9,
-          BACK: Gosu::KbEscape
+          BACK: Gosu::KbEscape,
+          ACCEPT: Gosu::KbEnter
         },
         gamepad: {
           UP: Gosu::GP_UP,
@@ -57,9 +58,10 @@ module SettingsFile
           RIGHT: Gosu::GP_RIGHT,
           "SPEED UP": Gosu::GP_BUTTON_0,
           PAUSE: Gosu::GP_BUTTON_4,
-          "MUSIC UP": Gosu::Kb0, # TODO
-          "MUSIC DOWN": Gosu::Kb9,
-          BACK: Gosu::GP_BUTTON_6
+          "MUSIC UP": Gosu::GP_BUTTON_9,
+          "MUSIC DOWN": Gosu::GP_BUTTON_11,
+          BACK: Gosu::GP_BUTTON_6,
+          ACCEPT: Gosu::GP_BUTTON_0
         }
       }
     }

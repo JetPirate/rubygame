@@ -36,11 +36,19 @@ module Windows
     end
 
     def needs_cursor?
-      true unless @state == GAME
+      return false if @state == GAME
+      case SettingsFile.get(:controls_mode)
+      when :keyboard then true
+      when :gamepad  then false
+      end
     end
 
     def button_down(id)
       toggle_menu if @controls[:BACK] == id
+      case @state
+      when MENU then update_buttons_with_gamepad(@menu_buttons, id)
+      when GAME then update_buttons_with_gamepad(nil, id)
+      end
     end
 
     def return_menu
@@ -77,6 +85,8 @@ module Windows
       load_menu_textures
       @menu_buttons = create_buttons(menu_buttons_opts)
       create_buttons_commands(@menu_buttons)
+      return unless SettingsFile.get(:controls_mode) == :gamepad
+      @menu_buttons.first.selected = true
     end
 
     def draw_menu
@@ -89,7 +99,7 @@ module Windows
     end
 
     def update_menu
-      update_buttons(@menu_buttons)
+      update_buttons_with_mouse(@menu_buttons)
     end
 
     def toggle_menu
@@ -135,8 +145,9 @@ module Windows
     end
 
     def draw_score
+      score = Game.paused? ? 'Paused' : "Killed: #{@player.score}"
       @score_font.draw_markup(
-        "Killed: #{@player.score}",
+        score,
         10,
         10,
         ZOrder::UI,
@@ -172,7 +183,6 @@ module Windows
     end
 
     def update_game
-      Game.toggle_pause if Gosu.button_down?(@controls[:PAUSE])
       return if Game.paused?
       update_player
       update_humans
@@ -212,10 +222,21 @@ module Windows
         options = buttons_opts
         options[:text][:value] = name
         options[:command][:name] = opts[:commands][i]
-        buttons << UIElements::Button.new(self, width * 0.05, y_offset, options)
+        button = UIElements::Button.new(self, width * 0.05, y_offset, options)
+        define_button_events(button)
+        buttons << button
         y_offset += height * 0.1
       end
       buttons
+    end
+
+    def define_button_events(button)
+      button.on_select do |this|
+        this.color = Colors::TEXT_MENU
+      end
+      button.off_select do |this|
+        this.color = Colors::WHITE
+      end
     end
 
     def create_buttons_commands(buttons)
@@ -226,18 +247,39 @@ module Windows
       end
     end
 
+    def change_selection(mode, items, index = nil)
+      index ||= items&.find_index(&:selected?)
+      return if index.nil?
+      items[index].selected = false
+      direction = mode == :down ? 1 : -1
+      position = (index + direction) % items.count
+      items[position].selected = true
+    end
+
+    def update_buttons_with_gamepad(buttons, button_id)
+      controls = SettingsFile.get(:controls)[:gamepad]
+      index = buttons&.find_index(&:selected?)
+      case button_id
+      when controls[:DOWN]   then change_selection(:down, buttons, index)
+      when controls[:UP]     then change_selection(:up, buttons, index)
+      when controls[:ACCEPT] then buttons&.at(index)&.command
+      when controls[:PAUSE]  then Game.toggle_pause
+      end
+    end
+
     # rubocop:disable MethodLength
-    def update_buttons(buttons)
+    def update_buttons_with_mouse(buttons)
       buttons.each do |button|
         button.mouse_entered do |this|
-          this.color = Colors::TEXT_MAIN
+          this.selected = true
         end
         button.mouse_exited do |this|
-          this.color = Colors::WHITE
+          this.selected = false
         end
         button.mouse_clicked do |this|
+          this.selected = true
           this.command
-          this.color = Colors::WHITE
+          this.selected = false
         end
       end
     end

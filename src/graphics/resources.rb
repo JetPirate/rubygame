@@ -65,6 +65,7 @@ module Resources
       when Gosu::Kb9         then '9'
       when Gosu::Kb0         then '0'
       when Gosu::KbEscape    then 'ESC'
+      when Gosu::KbEnter     then 'Enter'
       when Gosu::GP_UP,
            Gosu::GP_0_UP,
            Gosu::GP_1_UP,

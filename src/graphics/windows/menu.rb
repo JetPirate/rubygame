@@ -7,6 +7,7 @@ module Windows
   class Menu < Gosu::Window
     include Resources
     include States
+
     def initialize
       super SettingsFile.get(:width), SettingsFile.get(:height)
       load_defaults
@@ -34,10 +35,18 @@ module Windows
 
     def button_down(id)
       caption_controls_key(id) if @_read_controls_key
+      case @state
+      when MENU     then update_buttons_with_gamepad(@menu_buttons, id)
+      when SETTINGS then update_buttons_with_gamepad(@settings_buttons, id)
+      when CONTROLS then update_buttons_with_gamepad(@controls_buttons, id)
+      end
     end
 
     def needs_cursor?
-      true
+      case SettingsFile.get(:controls_mode)
+      when :keyboard then true
+      when :gamepad  then false
+      end
     end
 
     def start_game
@@ -98,6 +107,8 @@ module Windows
              end
       SettingsFile.set(:controls_mode, mode)
       SettingsFile.save
+      @menu_buttons.first.selected = true
+      @settings_buttons.first.selected = true
       load_controls
     end
 
@@ -127,6 +138,8 @@ module Windows
       load_menu_textures
       @menu_buttons = create_buttons(menu_buttons_opts)
       create_buttons_commands(@menu_buttons)
+      return unless SettingsFile.get(:controls_mode) == :gamepad
+      @menu_buttons.first.selected = true
     end
 
     def draw_menu_buttons
@@ -139,7 +152,8 @@ module Windows
     end
 
     def update_menu
-      update_buttons(@menu_buttons)
+      return unless SettingsFile.get(:controls_mode) == :keyboard
+      update_buttons_with_mouse(@menu_buttons)
     end
 
     def menu_buttons_opts
@@ -159,6 +173,8 @@ module Windows
       load_settings_textures
       @settings_buttons = create_buttons(settings_buttons_opts)
       create_buttons_commands(@settings_buttons)
+      return unless SettingsFile.get(:controls_mode) == :gamepad
+      @settings_buttons.first.selected = true
     end
 
     def draw_settings_buttons
@@ -171,7 +187,8 @@ module Windows
     end
 
     def update_settings
-      update_buttons(@settings_buttons)
+      return unless SettingsFile.get(:controls_mode) == :keyboard
+      update_buttons_with_mouse(@settings_buttons)
     end
 
     def settings_buttons_opts
@@ -194,6 +211,8 @@ module Windows
       @controls_input_labels = create_input_labels(controls_input_opts)
       @controls_input_fields = create_input_fields(controls_input_opts)
       create_buttons_commands(@controls_buttons)
+      return unless SettingsFile.get(:controls_mode) == :gamepad
+      @controls_buttons.first.selected = true
     end
 
     def draw_controls_buttons
@@ -223,8 +242,9 @@ module Windows
     end
 
     def update_controls
-      update_buttons(@controls_buttons)
-      update_buttons(@controls_input_fields)
+      return unless SettingsFile.get(:controls_mode) == :keyboard
+      update_buttons_with_mouse(@controls_buttons)
+      update_buttons_with_mouse(@controls_input_fields)
     end
 
     def caption_controls_key(id)
@@ -247,7 +267,7 @@ module Windows
     def controls_input_opts
       {
         names: ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPEED UP', 'PAUSE',
-                'MUSIC UP', 'MUSIC DOWN', 'BACK'],
+                'MUSIC UP', 'MUSIC DOWN', 'BACK', 'ACCEPT'],
         commands: %i[read_controls_key]
       }
     end
@@ -276,18 +296,38 @@ module Windows
       end
     end
 
+    def change_selection(mode, items, index = nil)
+      index ||= items&.find_index(&:selected?)
+      return if index.nil?
+      items[index].selected = false
+      direction = mode == :down ? 1 : -1
+      position = (index + direction) % items.count
+      items[position].selected = true
+    end
+
+    def update_buttons_with_gamepad(buttons, button_id)
+      controls = SettingsFile.get(:controls)[:gamepad]
+      index = buttons&.find_index(&:selected?)
+      case button_id
+      when controls[:DOWN]   then change_selection(:down, buttons, index)
+      when controls[:UP]     then change_selection(:up, buttons, index)
+      when controls[:ACCEPT] then buttons&.at(index)&.command
+      end
+    end
+
     # rubocop:disable MethodLength
-    def update_buttons(buttons)
+    def update_buttons_with_mouse(buttons)
       buttons.each do |button|
         button.mouse_entered do |this|
-          this.color = Colors::TEXT_MENU
+          this.selected = true
         end
         button.mouse_exited do |this|
-          this.color = Colors::WHITE
+          this.selected = false
         end
         button.mouse_clicked do |this|
+          this.selected = true
           this.command
-          this.color = Colors::WHITE
+          this.selected = false
         end
       end
     end
@@ -327,10 +367,21 @@ module Windows
         options = buttons_opts
         options[:text][:value] = name
         options[:command][:name] = opts[:commands][i]
-        buttons << UIElements::Button.new(self, width * 0.05, y_offset, options)
+        button = UIElements::Button.new(self, width * 0.05, y_offset, options)
+        define_button_events(button)
+        buttons << button
         y_offset += height * 0.1
       end
       buttons
+    end
+
+    def define_button_events(button)
+      button.on_select do |this|
+        this.color = Colors::TEXT_MENU
+      end
+      button.off_select do |this|
+        this.color = Colors::WHITE
+      end
     end
 
     def create_buttons_commands(buttons)
@@ -352,7 +403,7 @@ module Windows
         options = input_labels_opts
         options[:text][:value] = name
         labels << UIElements::Label.new(self, width * 0.45, y_offset, options)
-        y_offset += height * 0.1
+        y_offset += height * 0.09
       end
       labels
     end
@@ -371,7 +422,7 @@ module Windows
         )
         fields << UIElements::Button.new(self, width * 0.75, y_offset,
                                          options)
-        y_offset += height * 0.1
+        y_offset += height * 0.09
       end
       fields
     end

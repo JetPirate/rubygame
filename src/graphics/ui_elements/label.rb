@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require_relative '../../events'
-
 module UIElements
   # Represents a label
   class Label < UIElement
-    include MouseEvents
     include Resources
+    include MouseEvents
+    include SelectionEvents
+
     attr_reader :image, :value, :color
 
     def initialize(window, x, y, options)
       super(window, x, y, options)
       parse(options)
-      mouse_init_events
+      init_mouse_events
     end
 
     def draw(image_opts = {}, text_opts = {})
