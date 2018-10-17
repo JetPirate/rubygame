@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 echo "The script must be executed under root, so it will ask you for password."
 
-if command -v apt-get 2>/dev/null; then
-  downl=apt-get
+if command -v apt 2>/dev/null; then
+  downl=apt
 elif command -v dnf 2>/dev/null; then
   downl=dnf
 elif command -v yum 2>/dev/null; then
@@ -24,9 +24,9 @@ else
     sudo $downl install --assumeyes gcc-c++ redhat-rpm-config
     echo "Installing ruby..."
     sudo $downl install --assumeyes ruby-devel rubygems
-  elif [ "$downl" == "apt-get" ]; then
-    sudo $downl install -y build-essential libsdl2-dev
-    sudo $downl install -y libgl1-mesa-dev libopenal-dev
+  elif [ "$downl" == "apt" ]; then
+    sudo $downl install -y build-essential libsdl2-dev libsdl2-ttf-dev
+    sudo $downl install -y libpango1.0-dev libgl1-mesa-dev libopenal-dev
     sudo $downl install -y libsndfile-dev libmpg123-dev libgmp-dev
     echo "Installing ruby..."
     sudo $downl install -y ruby-dev
