@@ -31,10 +31,11 @@ module SettingsFile
 
   # rubocop:disable MethodLength
   def self.create
+    width, height = current_resolution
     @settings = {
       fullscreen: true,
-      width: 1920,
-      height: 1080,
+      width: width.to_i,
+      height: height.to_i,
       music: true,
       music_volume: 0.5,
       controls_mode: :keyboard,
@@ -72,4 +73,20 @@ module SettingsFile
   def self.save
     File.open('settings.yaml', 'w') { |f| f.write(@settings.to_yaml) }
   end
+
+  # rubocop:disable MethodLength
+  def self.current_resolution
+    case Gem::Platform.local.os
+    when 'linux'
+      `xrandr`.scan(/current (\d+) x (\d+)/).flatten
+    when 'mingw32'
+      require 'fiddle'
+      usr32 = Fiddle.dlopen('user32')
+      gsm = Fiddle::Function.new(usr32['GetSystemMetrics'],
+                                 [Fiddle::TYPE_LONG],
+                                 Fiddle::TYPE_LONG)
+      [gsm.call(0), gsm.call(1)]
+    end
+  end
+  # rubocop:enable MethodLength
 end
