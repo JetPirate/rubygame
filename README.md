@@ -33,6 +33,8 @@ $ ./rubygame
  - **9** or **0** to control music volume
  - **ESC** to exit
 
+Gamepads are supported as well.
+
 ### Installation
 
 The game uses

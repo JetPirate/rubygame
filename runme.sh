@@ -25,8 +25,8 @@ else
     echo "Installing ruby..."
     sudo $downl install --assumeyes ruby-devel rubygems
   elif [ "$downl" == "apt-get" ]; then
-    sudo $downl install -y build-essential libsdl2-dev libsdl2-ttf-dev
-    sudo $downl install -y libpango1.0-dev libgl1-mesa-dev libopenal-dev
+    sudo $downl install -y build-essential libsdl2-dev
+    sudo $downl install -y libgl1-mesa-dev libopenal-dev
     sudo $downl install -y libsndfile-dev libmpg123-dev libgmp-dev
     echo "Installing ruby..."
     sudo $downl install -y ruby-dev
